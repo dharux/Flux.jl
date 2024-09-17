@@ -70,7 +70,7 @@ Momentum(η = 0.01, ρ = 0.9) = Momentum(η, ρ, IdDict())
 
 function apply!(o::Momentum, x, Δ)
   η, ρ = o.eta, o.rho
-  v = get!(() -> zero(x), o.velocity, x)::typeof(x)
+  v = get!(() -> zero(x), o.velocity, x)::supertype(typeof(x))
   @. v = ρ * v - η * Δ
   @. Δ = -v
 end
@@ -103,7 +103,7 @@ Nesterov(η = 0.001, ρ = 0.9) = Nesterov(η, ρ, IdDict())
 
 function apply!(o::Nesterov, x, Δ)
   η, ρ = o.eta, o.rho
-  v = get!(() -> zero(x), o.velocity, x)::typeof(x)
+  v = get!(() -> zero(x), o.velocity, x)::supertype(typeof(x))
   d = @. ρ^2 * v - (1+ρ) * η * Δ
   @. v = ρ*v - η*Δ
   @. Δ = -d
@@ -141,7 +141,7 @@ RMSProp(η::Real, ρ::Real, acc::IdDict) = RMSProp(η, ρ, EPS, acc)
 
 function apply!(o::RMSProp, x, Δ)
   η, ρ = o.eta, o.rho
-  acc = get!(() -> zero(x), o.acc, x)::typeof(x)
+  acc = get!(() -> zero(x), o.acc, x)::supertype(typeof(x))
   @. acc = ρ * acc + (1 - ρ) * Δ * conj(Δ)
   @. Δ *= η / (√acc + o.epsilon)
 end
@@ -178,7 +178,7 @@ function apply!(o::Adam, x, Δ)
 
   mt, vt, βp = get!(o.state, x) do
       (zero(x), zero(x), Float64[β[1], β[2]])
-  end :: Tuple{typeof(x),typeof(x),Vector{Float64}}
+  end :: Tuple{supertype(typeof(x)),supertype(typeof(x)),Vector{Float64}}
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
   @. vt = β[2] * vt + (1 - β[2]) * Δ * conj(Δ)
@@ -221,7 +221,7 @@ function apply!(o::RAdam, x, Δ)
 
   mt, vt, βp, t = get!(o.state, x) do
       (zero(x), zero(x), Float64[β[1], β[2]], Ref(1))
-  end :: Tuple{typeof(x),typeof(x),Vector{Float64},Base.RefValue{Int}}
+  end :: Tuple{supertype(typeof(x)),supertype(typeof(x)),Vector{Float64},Base.RefValue{Int}}
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
   @. vt = β[2] * vt + (1 - β[2]) * Δ * conj(Δ)
@@ -270,7 +270,7 @@ function apply!(o::AdaMax, x, Δ)
 
   mt, ut, βp = get!(o.state, x) do
       (zero(x), zero(x), Float64[β[1], β[2]])
-  end :: Tuple{typeof(x),typeof(x),Vector{Float64}}
+  end :: Tuple{supertype(typeof(x)),supertype(typeof(x)),Vector{Float64}}
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
   @. ut = max(β[2] * ut, abs(Δ))
@@ -313,7 +313,7 @@ function apply!(o::OAdam, x, Δ)
 
   mt, vt, Δ_, βp = get!(o.state, x) do
       (zero(x), zero(x), zero(x), Float64[β[1], β[2]])
-  end :: Tuple{typeof(x),typeof(x),typeof(x),Vector{Float64}}
+  end :: Tuple{supertype(typeof(x)),supertype(typeof(x)),supertype(typeof(x)),Vector{Float64}}
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
   @. vt = β[2] * vt + (1 - β[2]) * Δ * conj(Δ)
@@ -353,7 +353,7 @@ AdaGrad(η::Real, state::IdDict) = AdaGrad(η, EPS, state)
 
 function apply!(o::AdaGrad, x, Δ)
   η = o.eta
-  acc = get!(() -> fill!(similar(x), o.epsilon), o.acc, x)::typeof(x)
+  acc = get!(() -> fill!(similar(x), o.epsilon), o.acc, x)::supertype(typeof(x))
   @. acc += Δ * conj(Δ)
   @. Δ *= η / (√acc + o.epsilon)
 end
@@ -385,7 +385,7 @@ AdaDelta(ρ::Real, state::IdDict) = AdaDelta(ρ, EPS, state)
 
 function apply!(o::AdaDelta, x, Δ)
   ρ = o.rho
-  acc, Δacc = get!(() -> (zero(x), zero(x)), o.state, x)::NTuple{2,typeof(x)}
+  acc, Δacc = get!(() -> (zero(x), zero(x)), o.state, x)::NTuple{2,supertype(typeof(x))}
   @. acc = ρ * acc + (1 - ρ) * Δ * conj(Δ)
   # DON'T remove epsilon from numerator
   # or even out of the square roots
@@ -427,7 +427,7 @@ function apply!(o::AMSGrad, x, Δ)
 
   mt, vt, v̂t = get!(o.state, x) do
     (fill!(similar(x), o.epsilon), fill!(similar(x), o.epsilon), fill!(similar(x), o.epsilon))
-  end :: NTuple{3,typeof(x)}
+  end :: NTuple{3,supertype(typeof(x))}
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
   @. vt = β[2] * vt + (1 - β[2]) * Δ ^ 2
@@ -468,7 +468,7 @@ function apply!(o::NAdam, x, Δ)
 
   mt, vt, βp = get!(o.state, x) do
     (zero(x), zero(x), Float64[o.beta[1], o.beta[2]])
-  end :: Tuple{typeof(x),typeof(x),Vector{Float64}}
+  end :: Tuple{supertype(typeof(x)),supertype(typeof(x)),Vector{Float64}}
   β1p, β2p = βp
 
   @. mt = β[1] * mt + (1 - β[1]) * Δ
@@ -535,7 +535,7 @@ function apply!(o::AdaBelief, x, Δ)
 
   mt, st, βp = get!(o.state, x) do
       (zero(x), zero(x), Float64[β[1], β[2]])
-  end :: Tuple{typeof(x), typeof(x), Vector{Float64}}
+  end :: Tuple{supertype(typeof(x)), supertype(typeof(x)), Vector{Float64}}
 
   #= st is a variance and can go to zero. This is in contrast to Adam, which uses the
   second moment which is usually far enough from zero. This is problematic, since st
