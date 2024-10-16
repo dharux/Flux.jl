@@ -265,7 +265,7 @@ end
 AdaMax(η::T = 0.001f0, β::Tuple = (0.9, 0.999), ϵ::Real = EPS) where {T<:AbstractFloat} = AdaMax(η, β, ϵ, IdDict())
 AdaMax(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AdaMax(η, β, EPS, state)
 
-function apply!(o::AdaMax, x, Δ) where {T}
+function apply!(o::AdaMax, x, Δ)
   η, β = o.eta, o.beta
 
   mt, ut, βp = get!(o.state, x) do
@@ -568,11 +568,11 @@ usual.
 !!! note
     This will be replaced by `Optimisers.OptimiserChain` in Flux 0.15.
 """
-mutable struct Optimiser{T<:AbstractFloat} <: AbstractOptimiser
-  os::Vector{AbstractOptimiser{T}}
+mutable struct Optimiser <: AbstractOptimiser
+  os::Vector{Any}
 end
 
-Optimiser(opts::AbstractOptimiser...) = Optimiser(Vector{AbstractOptimiser}[opts...])
+Optimiser(opts::AbstractOptimiser...) = Optimiser(Any[opts...])
 
 @forward Optimiser.os Base.getindex, Base.first, Base.last, Base.lastindex, Base.push!, Base.setindex!
 @forward Optimiser.os Base.iterate
