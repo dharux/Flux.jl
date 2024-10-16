@@ -66,7 +66,7 @@ mutable struct Momentum{T<:AbstractFloat} <: AbstractOptimiser
   velocity::IdDict
 end
 
-Momentum(η::T = 0.01f0, ρ = 0.9f0) where {T<:AbstractFloat} = Momentum(η, ρ, IdDict())
+Momentum(η::T = 0.01f0, ρ = 0.9f0) where {T<:AbstractFloat} = Momentum{T}(η, ρ, IdDict())
 
 function apply!(o::Momentum, x, Δ)
   η, ρ = o.eta, o.rho
@@ -99,7 +99,7 @@ mutable struct Nesterov{T<:AbstractFloat} <: AbstractOptimiser
   velocity::IdDict
 end
 
-Nesterov(η::T = 0.001f0, ρ = 0.9f0) where {T<:AbstractFloat} = Nesterov(η, ρ, IdDict())
+Nesterov(η::T = 0.001f0, ρ = 0.9f0) where {T<:AbstractFloat} = Nesterov{T}(η, ρ, IdDict())
 
 function apply!(o::Nesterov, x, Δ)
   η, ρ = o.eta, o.rho
@@ -136,8 +136,8 @@ mutable struct RMSProp{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   acc::IdDict
 end
-RMSProp(η::T = 0.001f0, ρ::Real = 0.9f0, ϵ::Real = EPS) where {T<:AbstractFloat} = RMSProp(η, ρ, ϵ, IdDict())
-RMSProp(η::T, ρ::Real, acc::IdDict) where {T<:AbstractFloat} = RMSProp(η, ρ, EPS, acc)
+RMSProp(η::T = 0.001f0, ρ::Real = 0.9f0, ϵ::Real = EPS) where {T<:AbstractFloat} = RMSProp{T}(η, ρ, ϵ, IdDict())
+RMSProp(η::T, ρ::Real, acc::IdDict) where {T<:AbstractFloat} = RMSProp{T}(η, ρ, EPS, acc)
 
 function apply!(o::RMSProp, x, Δ)
   η, ρ = o.eta, o.rho
@@ -170,8 +170,8 @@ mutable struct Adam{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-Adam(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = Adam(η, β, ϵ, IdDict())
-Adam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = Adam(η, β, EPS, state)
+Adam(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = Adam{T}(η, β, ϵ, IdDict())
+Adam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = Adam{T}(η, β, EPS, state)
 
 function apply!(o::Adam{T}, x, Δ) where {T}
   η, β = o.eta, o.beta
@@ -212,8 +212,8 @@ mutable struct RAdam{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-RAdam(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = RAdam(η, β, ϵ, IdDict())
-RAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = RAdam(η, β, EPS, state)
+RAdam(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = RAdam{T}(η, β, ϵ, IdDict())
+RAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = RAdam{T}(η, β, EPS, state)
 
 function apply!(o::RAdam{T}, x, Δ) where {T}
   η, β = o.eta, o.beta
@@ -262,8 +262,8 @@ mutable struct AdaMax{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-AdaMax(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AdaMax(η, β, ϵ, IdDict())
-AdaMax(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AdaMax(η, β, EPS, state)
+AdaMax(η::T = 0.001f0, β::Tuple = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AdaMax{T}(η, β, ϵ, IdDict())
+AdaMax(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AdaMax{T}(η, β, EPS, state)
 
 function apply!(o::AdaMax, x, Δ)
   η, β = o.eta, o.beta
@@ -305,8 +305,8 @@ mutable struct OAdam{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-OAdam(η::T = 0.001f0, β::Tuple = (0.5f0, 0.9f0), ϵ::Real = EPS) where {T<:AbstractFloat} = OAdam(η, β, ϵ, IdDict())
-OAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = RMSProp(η, β, EPS, state)
+OAdam(η::T = 0.001f0, β::Tuple = (0.5f0, 0.9f0), ϵ::Real = EPS) where {T<:AbstractFloat} = OAdam{T}(η, β, ϵ, IdDict())
+OAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = RMSProp{T}(η, β, EPS, state)
 
 function apply!(o::OAdam{T}, x, Δ) where {T}
   η, β = o.eta, o.beta
@@ -348,8 +348,8 @@ mutable struct AdaGrad{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   acc::IdDict
 end
-AdaGrad(η::T = 0.1f0, ϵ::Real = EPS) where {T<:AbstractFloat} = AdaGrad(η, ϵ, IdDict())
-AdaGrad(η::T, state::IdDict) where {T<:AbstractFloat} = AdaGrad(η, EPS, state)
+AdaGrad(η::T = 0.1f0, ϵ::Real = EPS) where {T<:AbstractFloat} = AdaGrad{T}(η, ϵ, IdDict())
+AdaGrad(η::T, state::IdDict) where {T<:AbstractFloat} = AdaGrad{T}(η, EPS, state)
 
 function apply!(o::AdaGrad, x, Δ)
   η = o.eta
@@ -380,8 +380,8 @@ mutable struct AdaDelta{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-AdaDelta(ρ::T = 0.9f0, ϵ::Real = EPS) where {T<:AbstractFloat} = AdaDelta(ρ, ϵ, IdDict())
-AdaDelta(ρ::T, state::IdDict) where {T<:AbstractFloat} = AdaDelta(ρ, EPS, state)
+AdaDelta(ρ::T = 0.9f0, ϵ::Real = EPS) where {T<:AbstractFloat} = AdaDelta{T}(ρ, ϵ, IdDict())
+AdaDelta(ρ::T, state::IdDict) where {T<:AbstractFloat} = AdaDelta{T}(ρ, EPS, state)
 
 function apply!(o::AdaDelta, x, Δ)
   ρ = o.rho
@@ -419,8 +419,8 @@ mutable struct AMSGrad{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-AMSGrad(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AMSGrad(η, β, ϵ, IdDict())
-AMSGrad(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AMSGrad(η, β, EPS, state)
+AMSGrad(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AMSGrad{T}(η, β, ϵ, IdDict())
+AMSGrad(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AMSGrad{T}(η, β, EPS, state)
 
 function apply!(o::AMSGrad, x, Δ)
   η, β = o.eta, o.beta
@@ -460,8 +460,8 @@ mutable struct NAdam{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-NAdam(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = NAdam(η, β, ϵ, IdDict())
-NAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = NAdam(η, β, EPS, state)
+NAdam(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = NAdam{T}(η, β, ϵ, IdDict())
+NAdam(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = NAdam{T}(η, β, EPS, state)
 
 function apply!(o::NAdam{T}, x, Δ) where {T<:AbstractFloat}
   η, β = o.eta, o.beta
@@ -527,8 +527,8 @@ mutable struct AdaBelief{T<:AbstractFloat} <: AbstractOptimiser
   epsilon::T
   state::IdDict{Any, Any}
 end
-AdaBelief(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AdaBelief(η, β, ϵ, IdDict())
-AdaBelief(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AdaBelief(η, β, EPS, state)
+AdaBelief(η::T = 0.001f0, β = (0.9f0, 0.999f0), ϵ::Real = EPS) where {T<:AbstractFloat} = AdaBelief{T}(η, β, ϵ, IdDict())
+AdaBelief(η::T, β::Tuple, state::IdDict) where {T<:AbstractFloat} = AdaBelief{T}(η, β, EPS, state)
 
 function apply!(o::AdaBelief{T}, x, Δ) where {T}
   η, β = o.eta, o.beta
@@ -661,7 +661,7 @@ mutable struct ExpDecay{T<:AbstractFloat} <: AbstractOptimiser
 end
 
 ExpDecay(opt::T = 0.001f0, decay = 0.1f0, decay_step = 1000, clip = 1f-4, start = 0) where {T} =
-  ExpDecay(opt, decay, decay_step, clip, start, IdDict())
+  ExpDecay{T}(opt, decay, decay_step, clip, start, IdDict())
 
 function apply!(o::ExpDecay, x, Δ)
   η, s, decay, start = o.eta, o.step, o.decay, o.start
